@@ -114,3 +114,6 @@ dmypy.json
 
 # vscode settings
 .vscode/
+
+# test code
+test.py
