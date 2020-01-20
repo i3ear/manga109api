@@ -111,3 +111,9 @@ venv.bak/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# vscode settings
+.vscode/
+
+# test code
+test.py
