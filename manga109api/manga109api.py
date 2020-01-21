@@ -37,6 +37,7 @@ class Parser(object):
         with (self.root_dir / "annotations" / (book + ".xml")).open("rt", encoding='utf-8') as f:
             annotation = xmltodict.parse(f.read())
         annotation = json.loads(json.dumps(annotation))
+        annotation = _format_annotation(annotation)
         _convert_str_to_int_recursively(annotation)
         return annotation
 
@@ -54,6 +55,44 @@ class Parser(object):
         assert book in self.books
         assert isinstance(index, int)
         return str((self.root_dir / "images" / book / (str(index).zfill(3) + ".jpg")).resolve())
+
+
+def _format_annotation(annotation):
+    """
+
+    """
+
+    title = annotation['book']['@title']
+    character = annotation['book']['characters']['character']
+    page = annotation['book']['pages']['page']
+
+    if not isinstance(character, list):
+        character = [character]
+    if not isinstance(page, list):
+        page = [page]
+    _format_page_dict_style(page)
+
+    return {
+        'title': title,
+        'character': character,
+        'page': page
+    }
+
+
+def _format_page_dict_style(page):
+    """
+
+    """
+    required_keys = {'@index', '@width', '@height', 'body', 'face', 'frame', 'text'}
+
+    for i, p in enumerate(page):
+
+        for k in required_keys - set(p.keys()):
+            page[i][k] = []
+
+        for k in ['body', 'face', 'frame', 'text']:
+            if not isinstance(p[k], list):
+                page[i][k] = [page[i][k]]
 
 
 def _convert_str_to_int_recursively(annotation):
